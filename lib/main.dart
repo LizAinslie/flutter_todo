@@ -123,11 +123,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: ElevatedButton(
                                   child: const Text('Cancel'),
                                   onPressed: () => Navigator.pop(context),
-                                )
-                              )
+                                ),
+                              ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   );
