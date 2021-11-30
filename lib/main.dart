@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_todo/components/todo_item.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'todo.dart';
 
-const todosBox = 'todo';
 const settingsBox = 'settings';
 
 List<Todo> makeDefaultTodos() => [
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: Hive.box<Todo>(todosBox).listenable(),
-      builder: (context, Box<Todo> box, _) {
+      builder: (context, Box<Todo> todos, _) {
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ElevatedButton(
                                     child: const Text('Add'),
                                     onPressed: () {
-                                      box.add(Todo(_newTodoText));
+                                      todos.add(Todo(_newTodoText));
                                       Navigator.pop(context);
                                     },
                                   ),
@@ -136,25 +136,8 @@ class _MyHomePageState extends State<MyHomePage> {
           body: Center(
             child: ListView.separated(
               padding: const EdgeInsets.all(16.0),
-              itemCount: box.length,
-              itemBuilder: (context, i) {
-                Todo todo = box.getAt(i)!;
-                return ListTile(
-                  title: Text(todo.text),
-                  trailing: Icon(
-                    todo.done ? Icons.check_box : Icons.check_box_outline_blank,
-                    color: todo.done ? Colors.green : null,
-                    semanticLabel: todo.done ? 'Mark Not Done' : 'Mark Done',
-                  ),
-                  onTap: () {
-                    todo.toggleDone();
-                    todo.save();
-                  },
-                  onLongPress: () {
-                    box.deleteAt(i);
-                  },
-                );
-              },
+              itemCount: todos.length,
+              itemBuilder: (context, i) => TodoItem(task: todos.getAt(i)!),
               separatorBuilder: (context, i) {
                 return const Divider();
               }

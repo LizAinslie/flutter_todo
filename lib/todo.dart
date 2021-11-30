@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 
+const todosBox = 'todo';
+
 class Todo extends HiveObject {
   Todo(this.text, {this.done = false});
   bool done = false;
