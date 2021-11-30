@@ -21,6 +21,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ValueListenableBuilder(
         valueListenable: Hive.box(settingsBox).listenable(),
         builder: (context, Box settings, _) {
+          bool darkMode = settings.get('darkMode', defaultValue: false);
           return Container(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -28,11 +29,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 ListTile(
                   title: const Text('Dark Mode'),
                   trailing: Icon(
-                    settings.get('darkMode', defaultValue: false) ? Icons.check_box : Icons.check_box_outline_blank,
-                    semanticLabel: settings.get('darkMode', defaultValue: false) ? 'Disable Dark Mode' : 'Enable Dark Mode',
+                    darkMode ? Icons.check_box : Icons.check_box_outline_blank,
+                    semanticLabel: darkMode ? 'Disable Dark Mode' : 'Enable Dark Mode',
                   ),
                   onTap: () {
-                    settings.put('darkMode', !settings.get('darkMode', defaultValue: false));
+                    settings.put('darkMode', !darkMode);
                   },
                 ),
                 SizedBox(

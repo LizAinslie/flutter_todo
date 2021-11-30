@@ -34,7 +34,12 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Todos',
           themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
-          darkTheme: ThemeData.dark(),
+          darkTheme: ThemeData.from(
+            colorScheme: const ColorScheme.dark(
+              primary: Colors.deepOrange,
+              primaryVariant: Colors.deepOrangeAccent,
+            ),
+          ),
           theme: ThemeData(
             primarySwatch: Colors.deepOrange,
           ),
