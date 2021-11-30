@@ -34,13 +34,15 @@ void resetApp() async {
   Box<Todo> todos = Hive.box<Todo>(todosBox);
   Box settings = Hive.box(settingsBox);
 
+  // Apply the default list of tasks
   await todos.clear();
-
   for (Todo todo in makeDefaultTodos()) {
     todos.add(todo);
   }
 
-  settings.put('defaultsAdded', true);
+  // Settings
+  settings.put('defaultsAdded', true); // Tell the app not to create defaults anymore
+  settings.put('darkMode', false); // Default: Light mode
 }
 
 class MyApp extends StatelessWidget {
@@ -53,14 +55,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepOrange,
       ),
-      home: const MyHomePage(title: 'Todos'),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const MyHomePage({Key? key}) : super(key: key);
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -75,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (context, Box<Todo> todos, _) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.title),
+            title: const Text('Todos'),
             actions: [
               IconButton(
                 onPressed: () {
@@ -165,11 +167,21 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: ValueListenableBuilder(
         valueListenable: Hive.box(settingsBox).listenable(),
-        builder: (context, Box box, _) {
+        builder: (context, Box settings, _) {
           return Container(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
+                ListTile(
+                  title: const Text('Dark Mode'),
+                  trailing: Icon(
+                    settings.get('darkMode', defaultValue: false) ? Icons.check_box : Icons.check_box_outline_blank,
+                    semanticLabel: settings.get('darkMode', defaultValue: false) ? 'Disable Dark Mode' : 'Enable Dark Mode',
+                  ),
+                  onTap: () {
+                    settings.put('darkMode', !settings.get('darkMode', defaultValue: false));
+                  },
+                ),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -219,12 +231,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                     child: const Text('Reset Todos'),
                   ),
-                )
+                ),
               ],
             ),
           );
-        }
-      )
+        },
+      ),
     );
   }
 }
