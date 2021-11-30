@@ -79,6 +79,54 @@ class _MyHomePageState extends State<MyHomePage> {
             actions: [
               IconButton(
                 onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        padding: const EdgeInsets.all(16),
+                        height: 200,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextField(
+                              onChanged: (text) {
+                                setState(() {
+                                  _newTodoText = text;
+                                });
+                              },
+                            ),
+                            Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    child: const Text('Add'),
+                                    onPressed: () {
+                                      box.add(Todo(_newTodoText));
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 16),
+                                    child: ElevatedButton(
+                                      child: const Text('Cancel'),
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.add)
+              ),
+              IconButton(
+                onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
                 },
                 icon: const Icon(Icons.settings),
@@ -111,55 +159,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 return const Divider();
               }
             ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return Container(
-                    padding: const EdgeInsets.all(16),
-                    height: 200,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextField(
-                          onChanged: (text) {
-                            setState(() {
-                              _newTodoText = text;
-                            });
-                          },
-                        ),
-                        Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                child: const Text('Add'),
-                                onPressed: () {
-                                  box.add(Todo(_newTodoText));
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 16),
-                                child: ElevatedButton(
-                                  child: const Text('Cancel'),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-            tooltip: 'New',
-            child: const Icon(Icons.add),
           ),
         );
       },
