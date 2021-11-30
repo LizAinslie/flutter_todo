@@ -4,6 +4,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'todo.dart';
 
 const todosBox = 'todo';
+const settingsBox = 'settings';
+
 List<Todo> defaultTodos = [
   Todo('This is a todo list app'),
   Todo('Use the button below to add things'),
@@ -16,11 +18,17 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter<Todo>(TodoAdapter());
   Box box = await Hive.openBox<Todo>(todosBox);
+  Box settings = await Hive.openBox(settingsBox);
 
-  if (box.isEmpty) {
+  // If the user clears everything and restarts the app, we shouldn't add the
+  // defaults back, so we only add them once.
+  bool newInstall = !settings.get('defaultsAdded', defaultValue: false);
+  if (newInstall && box.isEmpty) {
     for (Todo todo in defaultTodos) {
       box.add(todo);
     }
+
+    settings.put('defaultsAdded', true);
   }
 
   runApp(const MyApp());
@@ -29,7 +37,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
