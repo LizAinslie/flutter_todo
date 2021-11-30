@@ -9,13 +9,13 @@ import 'pages/home.dart';
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter<Todo>(TodoAdapter());
-  Box<Todo> box = await Hive.openBox<Todo>(todosBox);
+  Box<Todo> todos = await Hive.openBox<Todo>(todosBox);
   Box settings = await Hive.openBox(settingsBox);
 
   // If the user clears everything and restarts the app, we shouldn't add the
   // defaults back, so we only add them once.
   bool newInstall = !settings.get('defaultsAdded', defaultValue: false);
-  if (newInstall && box.isEmpty) {
+  if (newInstall && todos.isEmpty) {
     resetApp();
   }
 
@@ -27,12 +27,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Todo',
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: const HomePage(),
+    return ValueListenableBuilder(
+      valueListenable: Hive.box(settingsBox).listenable(),
+      builder: (BuildContext context, Box settings, _) {
+        bool darkMode = settings.get('darkMode', defaultValue: false);
+        return MaterialApp(
+          title: 'Todos',
+          themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
+          darkTheme: ThemeData.dark(),
+          theme: ThemeData(
+            primarySwatch: Colors.deepOrange,
+          ),
+          home: const HomePage(),
+        );
+      },
     );
   }
 }
